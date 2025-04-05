@@ -3,9 +3,9 @@
 
 // Configuration
 const CONFIG = {
-    backendUrl: 'https://localhost:5001/api/scan', // Replace with your actual backend URL
-    buttonText: 'Scam Check',
-    buttonPosition: 'bottom-right', // Options: 'bottom-right', 'bottom-left', 'top-right', 'top-left'
+    backendUrl: 'http://localhost:5001/api/scan', // Replace with your actual backend URL
+    buttonText: 'Scamurai',
+    buttonPosition: 'top-right', // Options: 'bottom-right', 'bottom-left', 'top-right', 'top-left'
 };
 
 // Main initialization function
