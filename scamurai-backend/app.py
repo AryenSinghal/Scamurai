@@ -27,7 +27,7 @@ if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY not found in environment variables")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-pro')
+model = genai.GenerativeModel('gemini-2.0-flash')
 
 # Predefined prompt template
 PROMPT_TEMPLATE = """
@@ -82,16 +82,50 @@ def scan_content():
         # Generate the prompt with the content
         prompt = PROMPT_TEMPLATE.format(content=content, url=url)
         
-        # Call Gemini API
-        response = model.generate_content(prompt)
+        # Call Gemini API with additional parameters to encourage JSON output
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.1,  # Lower temperature for more deterministic output
+                "top_p": 0.95,
+                "top_k": 40,
+            }
+        )
         
-        # Parse response text as JSON
-        try:
-            result = json.loads(response.text)
-            
-            # Validate the response format
-            if not isinstance(result, dict):
-                logger.error(f"Invalid response format from Gemini API: {response.text}")
+        # Extract and clean the response text
+        response_text = response.text.strip()
+        
+        # Try to find JSON in the response (in case there's surrounding text)
+        json_start = response_text.find('{')
+        json_end = response_text.rfind('}')
+        
+        if json_start >= 0 and json_end > json_start:
+            try:
+                # Extract just the JSON part
+                json_text = response_text[json_start:json_end+1]
+                result = json.loads(json_text)
+                
+                # Validate the response format
+                if not isinstance(result, dict):
+                    logger.error(f"Invalid response format from Gemini API: {response_text}")
+                    return jsonify({
+                        "threatLevel": 5,
+                        "explanation": "Sorry, I couldn't properly analyze this content. Please try again or ask for help.",
+                        "tips": [
+                            "When in doubt, don't provide personal information.",
+                            "Ask a trusted friend or family member for a second opinion.",
+                            "Contact the supposed sender through official channels to verify."
+                        ]
+                    }), 200
+                
+                # Log the threat level (but not the full analysis to protect privacy)
+                logger.info(f"Analysis complete. Threat level: {result.get('threatLevel', 'N/A')}")
+                
+                # Return the result
+                return jsonify(result), 200
+                
+            except json.JSONDecodeError:
+                logger.error(f"Failed to parse extracted JSON from Gemini API response: {json_text}")
                 return jsonify({
                     "threatLevel": 5,
                     "explanation": "Sorry, I couldn't properly analyze this content. Please try again or ask for help.",
@@ -101,17 +135,9 @@ def scan_content():
                         "Contact the supposed sender through official channels to verify."
                     ]
                 }), 200
-            
-            # Log the threat level (but not the full analysis to protect privacy)
-            logger.info(f"Analysis complete. Threat level: {result.get('threatLevel', 'N/A')}")
-            
-            # Return the result
-            return jsonify(result), 200
-            
-        except json.JSONDecodeError:
-            logger.error(f"Failed to parse Gemini API response as JSON: {response.text}")
-            
-            # Fallback response
+        else:
+            # No JSON structure found in response
+            logger.error(f"No JSON structure found in Gemini API response: {response_text}")
             return jsonify({
                 "threatLevel": 5,
                 "explanation": "Sorry, I couldn't properly analyze this content. Please try again or ask for help.",
@@ -136,4 +162,4 @@ if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     
     # Run the app
-    app.run(host='0.0.0.0', port=port, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
