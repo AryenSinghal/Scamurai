@@ -3,7 +3,7 @@
 
 // Configuration
 const CONFIG = {
-    backendUrl: 'https://your-backend-url.com/api/scan', // Replace with your actual backend URL
+    backendUrl: 'https://localhost:5001/api/scan', // Replace with your actual backend URL
     buttonText: 'Scam Check',
     buttonPosition: 'bottom-right', // Options: 'bottom-right', 'bottom-left', 'top-right', 'top-left'
 };
@@ -42,10 +42,12 @@ async function handleButtonClick() {
 
     // Show a loading indicator
     showLoadingIndicator();
+    console.log('Scamurai: Loading indicator shown');
 
     try {
         // Capture the current content (either via screenshot or text extraction)
         const contentData = await captureContent();
+        console.log('Scamurai: Content captured', contentData);
 
         // Send the data to the backend for analysis
         const analysisResult = await sendToBackend(contentData);
@@ -108,6 +110,7 @@ async function captureContent() {
         return chatContent ? chatContent.innerText : textContent;
     }
 
+    // Return the captured text content
     return textContent;
 }
 
