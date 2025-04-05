@@ -1,0 +1,260 @@
+/* Scamurai Styles for Floating Button and Overlay */
+
+/* Floating Action Button (FAB) */
+.scamurai-fab {
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.3s, background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    padding: 0;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.scamurai-fab:hover {
+    transform: scale(1.1);
+    background-color: #f44336;
+}
+
+.scamurai-fab:active {
+    transform: scale(0.95);
+}
+
+/* Button positions */
+.scamurai-fab.bottom-right {
+    bottom: 30px;
+    right: 30px;
+}
+
+.scamurai-fab.bottom-left {
+    bottom: 30px;
+    left: 30px;
+}
+
+.scamurai-fab.top-right {
+    top: 30px;
+    right: 30px;
+}
+
+.scamurai-fab.top-left {
+    top: 30px;
+    left: 30px;
+}
+
+/* Overlay base styles */
+.scamurai-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+}
+
+.scamurai-overlay-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 20px;
+    position: relative;
+}
+
+/* Header styles */
+.scamurai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.scamurai-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+}
+
+#scamurai-close-btn,
+#scamurai-error-close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #777;
+    padding: 0;
+    margin: 0;
+    line-height: 1;
+}
+
+/* Loading overlay specifics */
+.scamurai-overlay.loading .scamurai-overlay-content {
+    text-align: center;
+    padding: 40px;
+}
+
+.scamurai-spinner {
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #ff5722;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Results overlay specifics */
+.scamurai-results-content {
+    padding: 10px 0;
+}
+
+.scamurai-threat-indicator {
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.scamurai-threat-level {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.scamurai-threat-score {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+/* Threat level colors */
+.scamurai-threat-indicator.low-threat {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-left: 5px solid #2e7d32;
+}
+
+.scamurai-threat-indicator.medium-threat {
+    background-color: #fff8e1;
+    color: #f57c00;
+    border-left: 5px solid #f57c00;
+}
+
+.scamurai-threat-indicator.high-threat {
+    background-color: #ffebee;
+    color: #c62828;
+    border-left: 5px solid #c62828;
+}
+
+.scamurai-explanation,
+.scamurai-tips {
+    margin-bottom: 20px;
+}
+
+.scamurai-explanation h3,
+.scamurai-tips h3 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.scamurai-explanation p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+    margin: 0;
+}
+
+.scamurai-tips ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.scamurai-tips li {
+    margin-bottom: 8px;
+    font-size: 16px;
+    line-height: 1.4;
+    color: #555;
+}
+
+/* Error overlay specifics */
+.scamurai-overlay.error .scamurai-overlay-content {
+    background-color: #ffebee;
+    border-left: 5px solid #c62828;
+}
+
+.scamurai-error-content p {
+    color: #c62828;
+    font-size: 16px;
+    text-align: center;
+}
+
+/* Accessibility enhancements */
+.scamurai-overlay button:focus,
+.scamurai-fab:focus {
+    outline: 3px solid #2196f3;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .scamurai-fab {
+        background-color: #000000;
+    }
+
+    .scamurai-header h2 {
+        color: #000000;
+    }
+
+    .scamurai-explanation p,
+    .scamurai-tips li {
+        color: #000000;
+    }
+}
+
+/* Specific adjustments for older users */
+.scamurai-fab,
+.scamurai-header h2,
+.scamurai-threat-level,
+.scamurai-explanation h3,
+.scamurai-tips h3 {
+    font-weight: bold;
+}
+
+.scamurai-explanation p,
+.scamurai-tips li {
+    font-size: 18px;
+    line-height: 1.6;
+}

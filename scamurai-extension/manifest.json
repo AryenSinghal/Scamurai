@@ -1,0 +1,41 @@
+{
+    "manifest_version": 3,
+    "name": "Scamurai",
+    "version": "1.0.0",
+    "description": "Helps elderly users detect scams on popular websites",
+    "icons": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "64": "icons/icon64.png"
+    },
+    "permissions": [
+      "activeTab",
+      "storage",
+      "scripting"
+    ],
+    "host_permissions": [
+      "https://mail.google.com/*",
+      "https://web.whatsapp.com/*"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "content_scripts": [
+      {
+        "matches": [
+          "https://mail.google.com/*",
+          "https://web.whatsapp.com/*"
+        ],
+        "js": ["content-script.js"],
+        "css": ["overlay.css"]
+      }
+    ],
+    "action": {
+      "default_popup": "popup.html",
+      "default_icon": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "64": "icons/icon64.png"
+      }
+    }
+  }

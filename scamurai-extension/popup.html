@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scamurai</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 300px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      margin: 0;
+    }
+    
+    .header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .logo {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+    
+    h1 {
+      font-size: 20px;
+      margin: 0;
+      color: #333;
+    }
+    
+    .description {
+      color: #666;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    
+    .option {
+      margin-bottom: 15px;
+    }
+    
+    .option-label {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    
+    .option-text {
+      margin-left: 10px;
+      font-size: 16px;
+    }
+    
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: #ff5722;
+    }
+    
+    input:focus + .slider {
+      box-shadow: 0 0 1px #ff5722;
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    
+    .button {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .button:hover {
+      background-color: #f44336;
+    }
+    
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .status.enabled {
+      display: block;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    
+    .status.disabled {
+      display: block;
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+    
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #999;
+    }
+    
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    
+    .stats {
+      background-color: #e3f2fd;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 15px;
+    }
+    
+    .stat-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 14px;
+    }
+    
+    .help-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icons/icon48.png" alt="Scamurai Logo" class="logo">
+    <h1>Scamurai</h1>
+  </div>
+  
+  <div class="description">
+    Scamurai helps you detect potential scams on websites like Gmail and WhatsApp Web.
+  </div>
+  
+  <div class="option">
+    <label class="option-label">
+      <span class="switch">
+        <input type="checkbox" id="enabled-toggle" checked>
+        <span class="slider"></span>
+      </span>
+      <span class="option-text">Enable Scamurai</span>
+    </label>
+    <p class="help-text">Turn Scamurai on or off</p>
+  </div>
+  
+  <div class="option">
+    <label class="option-label">
+      <span class="switch">
+        <input type="checkbox" id="notifications-toggle" checked>
+        <span class="slider"></span>
+      </span>
+      <span class="option-text">Show Notifications</span>
+    </label>
+    <p class="help-text">Receive alerts when high-risk scams are detected</p>
+  </div>
+  
+  <div class="option">
+    <label class="option-label">
+      <span class="switch">
+        <input type="checkbox" id="auto-scan-toggle">
+        <span class="slider"></span>
+      </span>
+      <span class="option-text">Auto-Scan Messages</span>
+    </label>
+    <p class="help-text">Automatically scan new content (experimental)</p>
+  </div>
+  
+  <div id="status-message" class="status enabled">
+    Scamurai is active and ready to protect you.
+  </div>
+  
+  <button id="scan-now-button" class="button">Scan Current Page</button>
+  
+  <div class="section-title">Statistics</div>
+  <div class="stats">
+    <div class="stat-item">
+      <span>Scams Detected:</span>
+      <span id="scams-detected">0</span>
+    </div>
+    <div class="stat-item">
+      <span>High Risk:</span>
+      <span id="high-risk-count">0</span>
+    </div>
+    <div class="stat-item">
+      <span>Medium Risk:</span>
+      <span id="medium-risk-count">0</span>
+    </div>
+    <div class="stat-item">
+      <span>Low Risk:</span>
+      <span id="low-risk-count">0</span>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Scamurai v1.0.0 - Protecting seniors from online scams
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
