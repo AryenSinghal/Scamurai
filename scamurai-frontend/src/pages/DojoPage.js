@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { TrainingContext } from '../contexts/TrainingContext';
 import Header from '../components/Common/Header';
-import LoadingSpinner from '../components/Common/LoadingSpinner.js';
+import LoadingSpinner from '../components/Common/LoadingSpinner';
 import ChatSimulator from '../components/Chat/ChatSimulator';
 import EmailSimulator from '../components/Email/EmailSimulator';
 import MultipleChoice from '../components/Training/MultipleChoice';
@@ -144,7 +144,7 @@ const DojoPage = () => {
         {/* Multiple choice options */}
         {!showFeedback && currentScenario && (
           <MultipleChoice 
-            options={currentScenario.options} 
+            scenario={currentScenario}
             scenarioIndex={currentScenarioIndex}
           />
         )}
@@ -153,7 +153,6 @@ const DojoPage = () => {
         {showFeedback && currentScenario && (
           <FeedbackPanel 
             scenario={currentScenario}
-            selectedOption={currentScenario.options} 
             scenarioIndex={currentScenarioIndex}
           />
         )}

@@ -1,4 +1,3 @@
-// Copy content from the training-context artifact
 import React, { createContext, useState, useEffect } from 'react';
 import { fetchTrainingScenarios } from '../utils/api';
 
@@ -53,11 +52,11 @@ export const TrainingProvider = ({ children }) => {
     }
   };
   
-  // Handle option selection
-  const selectOption = (scenarioIndex, optionIndex) => {
+  // Handle option selection - now accepts a boolean (isScam)
+  const selectOption = (scenarioIndex, isScam) => {
     setSelectedOptions({
       ...selectedOptions,
-      [scenarioIndex]: optionIndex
+      [scenarioIndex]: isScam
     });
     setShowFeedback(true);
   };
@@ -71,7 +70,7 @@ export const TrainingProvider = ({ children }) => {
     } else {
       // Calculate score and mark as completed
       const correctAnswers = Object.keys(selectedOptions).filter(
-        scenarioIndex => selectedOptions[scenarioIndex] === scenarios[scenarioIndex].correctOption
+        scenarioIndex => selectedOptions[scenarioIndex] === scenarios[scenarioIndex].isScam
       ).length;
       
       setScore(correctAnswers);

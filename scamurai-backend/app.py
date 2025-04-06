@@ -189,45 +189,45 @@ def get_training_scenarios():
         # Log request
         logger.info(f"Received training scenarios request for content type: {content_type}")
         
-        # Prompt for generating training scenarios
+
         TRAINING_PROMPT = """
-        You are Scamurai, an advanced scam detection assistant helping to train elderly users to identify online scams.
+            You are Scamurai, an advanced scam detection assistant helping to train elderly users to identify online scams.
 
-        Generate 4 realistic examples of {content_type} scams similar to the original content below. Each example should 
-        test a different scam pattern but be somewhat similar to the original.
+            Generate 4 realistic examples of {content_type} scams similar to the original content below. Each example should 
+            test a different scam pattern but be somewhat similar to the original.
 
-        Original content:
-        ```
-        {original_content}
-        ```
+            Original content:
+            {original_content}
 
-        For each example, include:
-        1. The scam content (message or email body)
-        2. Four multiple-choice options for classifying the content (only one should be correct)
-        3. The correct answer (indicated by number 1-4)
-        4. An explanation of why it's a scam (or not) and what signs to look for
+            Copy
+            For each example, include:
+            1. The scam content (message or email body)
+            2. Whether it's a scam (true) or safe (false) - provide this as the "isScam" boolean property
+            3. An explanation of why it's a scam or safe that would be helpful to an elderly user learning to identify scams
 
-        Format your response as a JSON object with an array of 4 scenarios like this:
-        {{
-            "scenarios": [
-                {{
-                    "content": "Example scam text here...",
-                    "options": [
-                        "This is safe - nothing suspicious",
-                        "This is a scam - it requests urgent action",
-                        "This is a scam - it contains suspicious links",
-                        "This is suspicious - but needs more information"
-                    ],
-                    "correctOption": 2,
-                    "explanation": "This is a scam because it creates false urgency to make you act without thinking..."
-                }},
-                ... (3 more scenarios)
-            ]
-        }}
+            Format your response as a JSON object with an array of 4 scenarios like this:
+            {{
+                "scenarios": [
+                    {{
+                        "content": "Example scam text here...",
+                        "isScam": true,
+                        "explanation": "This is a scam because it creates false urgency to make you act without thinking. The message claims your account will be locked immediately, which is a common tactic to pressure you. Legitimate companies don't use such threatening language."
+                    }},
+                    {{
+                        "content": "Example safe message here...",
+                        "isScam": false,
+                        "explanation": "This message is safe because it comes from a legitimate service you use, doesn't ask for personal information, and provides a proper way to contact customer support if needed."
+                    }},
+                    ... (2 more scenarios)
+                ]
+            }}
 
-        Only provide the JSON object, nothing else.
+            Make sure to include both scam and safe examples to help users learn to distinguish between them. Create varied and realistic messages that elderly users might encounter.
+
+            Only provide the JSON object, nothing else.
         """
-        
+
+
         prompt = TRAINING_PROMPT.format(content_type=content_type, original_content=original_content)
         
         # Call Gemini API

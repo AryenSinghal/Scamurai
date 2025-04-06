@@ -47,12 +47,22 @@ const SelectedOption = styled.div`
   padding: 15px;
   border-radius: 8px;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
 `;
 
 const OptionLabel = styled.div`
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-right: 10px;
   color: #555;
+`;
+
+const OptionValue = styled.div`
+  padding: 5px 15px;
+  border-radius: 20px;
+  background-color: ${props => props.isScam ? '#ffebee' : '#e8f5e9'};
+  color: ${props => props.isScam ? '#c62828' : '#2e7d32'};
+  font-weight: bold;
 `;
 
 const CorrectOption = styled.div`
@@ -61,6 +71,8 @@ const CorrectOption = styled.div`
   border-radius: 8px;
   margin-bottom: 20px;
   border-left: 3px solid #4caf50;
+  display: flex;
+  align-items: center;
 `;
 
 const NextButton = styled.button`
@@ -84,11 +96,11 @@ const NextButton = styled.button`
 const FeedbackPanel = ({ scenario, scenarioIndex }) => {
   const { selectedOptions, goToNextScenario } = useContext(TrainingContext);
   
-  // Get the user's selected option
-  const selectedOptionIndex = selectedOptions[scenarioIndex];
+  // Get the user's selected option (now a boolean)
+  const userSelection = selectedOptions[scenarioIndex];
   
   // Check if the selection was correct
-  const isCorrect = selectedOptionIndex === scenario.correctOption;
+  const isCorrect = userSelection === scenario.isScam;
   
   return (
     <FeedbackContainer isCorrect={isCorrect}>
@@ -109,12 +121,16 @@ const FeedbackPanel = ({ scenario, scenarioIndex }) => {
         <>
           <SelectedOption>
             <OptionLabel>You selected:</OptionLabel>
-            {scenario.options[selectedOptionIndex]}
+            <OptionValue isScam={userSelection}>
+              {userSelection ? 'Scam' : 'Safe'}
+            </OptionValue>
           </SelectedOption>
           
           <CorrectOption>
             <OptionLabel>Correct answer:</OptionLabel>
-            {scenario.options[scenario.correctOption]}
+            <OptionValue isScam={scenario.isScam}>
+              {scenario.isScam ? 'Scam' : 'Safe'}
+            </OptionValue>
           </CorrectOption>
         </>
       )}
