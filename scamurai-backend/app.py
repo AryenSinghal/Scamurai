@@ -203,7 +203,8 @@ def get_training_scenarios():
             For each example, include:
             1. The scam content (message or email body)
             2. Whether it's a scam (true) or safe (false) - provide this as the "isScam" boolean property
-            3. An explanation of why it's a scam or safe that would be helpful to an elderly user learning to identify scams
+            3. An explanation of why it's a scam or safe that would be helpful to an elderly user learning to identify scams. 
+            4. For the explanation: use simple language, avoid technical jargon, keep it simple and concise.
 
             Format your response as a JSON object with an array of 4 scenarios like this:
             {{
