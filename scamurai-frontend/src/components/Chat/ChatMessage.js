@@ -4,121 +4,151 @@ import styled from 'styled-components';
 const MessageContainer = styled.div`
   display: flex;
   flex-direction: ${props => props.isSender ? 'row-reverse' : 'row'};
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   max-width: 100%;
   align-items: flex-end;
+  position: relative;
+  z-index: 1;
 `;
 
 const MessageBubble = styled.div`
-  background-color: ${props => props.isSender ? '#d9fdd3' : 'white'};
-  padding: 8px 12px;
-  border-radius: 7.5px;
-  max-width: 65%;
+  background-color: ${props => props.isSender ? '#dcf8c6' : 'white'};
+  padding: 10px 15px;
+  border-radius: 10px;
+  max-width: 70%;
   position: relative;
-  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid ${props => props.isSender ? '#c5e1a5' : '#e5e5e5'};
   
-  &:before {
+  /* Add a subtle arrow effect */
+  &::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: 10px;
     width: 0;
     height: 0;
-    border: 10px solid transparent;
-    border-top-color: ${props => props.isSender ? '#d9fdd3' : 'white'};
-    border-bottom: 0;
-    margin-top: 0;
+    border: 8px solid transparent;
     
-    ${props => props.isSender 
-      ? 'right: -5px; border-left: 0;' 
-      : 'left: -5px; border-right: 0;'
+    ${props => props.isSender
+        ? 'right: -16px; border-left-color: #dcf8c6; border-right: 0;'
+        : 'left: -16px; border-right-color: white; border-left: 0;'
     }
   }
 `;
 
 const MessageText = styled.div`
-  font-size: 0.95rem;
-  color: #111b21;
-  line-height: 1.4;
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.5;
   white-space: pre-wrap;
   word-wrap: break-word;
+  
+  /* Style for links in messages */
+  a {
+    color: #0288d1;
+    text-decoration: none;
+    border-bottom: 1px dotted #0288d1;
+    
+    &:hover {
+      border-bottom: 1px solid #0288d1;
+    }
+  }
+`;
+
+const MessageMeta = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: ${props => props.isSender ? 'flex-end' : 'flex-start'};
+  margin-top: 5px;
 `;
 
 const MessageTime = styled.div`
-  font-size: 0.7rem;
-  color: #667781;
-  text-align: right;
-  margin-top: 2px;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
+  font-size: 0.75rem;
+  color: #8696a0;
+  margin-right: ${props => props.isSender ? '0' : '5px'};
+  margin-left: ${props => props.isSender ? '5px' : '0'};
 `;
 
-const StatusTick = styled.div`
-  margin-left: 3px;
-  display: ${props => props.isSender ? 'inline' : 'none'};
+const StatusIndicator = styled.div`
+  display: ${props => props.isSender ? 'flex' : 'none'};
+  align-items: center;
   
   svg {
-    width: 14px;
-    height: 14px;
-    fill: #53bdeb;
+    width: 16px;
+    height: 16px;
+    fill: ${props => props.read ? '#53bdeb' : '#a5a5a5'};
   }
 `;
 
 // Function to identify and format URLs in message text
 const formatMessageWithLinks = (text) => {
-  if (!text) return '';
-  
-  // Regular expression to identify URLs
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  
-  // Split the text by URLs
-  const parts = text.split(urlRegex);
-  
-  // Find all URLs in the text
-  const urls = text.match(urlRegex) || [];
-  
-  // Combine parts and URLs, wrapping URLs in styled spans
-  const result = [];
-  parts.forEach((part, index) => {
-    result.push(part);
-    if (urls[index]) {
-      result.push(
-        <a 
-          key={index} 
-          href="#" 
-          style={{ color: '#039be5', textDecoration: 'underline' }}
-          onClick={(e) => {
-            e.preventDefault();
-            // Could add warning/confirmation here in a real app
-          }}
-        >
-          {urls[index]}
-        </a>
-      );
-    }
-  });
-  
-  return result;
+    if (!text) return '';
+
+    // Regular expression to identify URLs
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    // Split the text by URLs
+    const parts = text.split(urlRegex);
+
+    // Find all URLs in the text
+    const urls = text.match(urlRegex) || [];
+
+    // Combine parts and URLs, wrapping URLs in styled spans
+    const result = [];
+    parts.forEach((part, index) => {
+        result.push(part);
+        if (urls[index]) {
+            result.push(
+                <a
+                    key={index}
+                    href="#"
+                    onClick={(e) => {
+                        e.preventDefault();
+                        // Could add warning/confirmation here in a real app
+                    }}
+                >
+                    {urls[index]}
+                </a>
+            );
+        }
+    });
+
+    return result;
+};
+
+// Random function to determine if message is "read"
+const isMessageRead = () => {
+    return Math.random() > 0.3;
 };
 
 const ChatMessage = ({ text, isSender, time }) => {
-  return (
-    <MessageContainer isSender={isSender}>
-      <MessageBubble isSender={isSender}>
-        <MessageText>
-          {formatMessageWithLinks(text)}
-        </MessageText>
-        <MessageTime>
-          {time}
-          <StatusTick isSender={isSender}>
-            <svg viewBox="0 0 16 15" width="16" height="15">
-              <path d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.048a.366.366 0 0 0-.064-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.048a.365.365 0 0 0-.063-.51z" />
-            </svg>
-          </StatusTick>
-        </MessageTime>
-      </MessageBubble>
-    </MessageContainer>
-  );
+    const messageRead = isMessageRead();
+
+    return (
+        <MessageContainer isSender={isSender}>
+            <MessageBubble isSender={isSender}>
+                <MessageText>
+                    {formatMessageWithLinks(text)}
+                </MessageText>
+                <MessageMeta isSender={isSender}>
+                    <MessageTime isSender={isSender}>
+                        {time}
+                    </MessageTime>
+                    <StatusIndicator isSender={isSender} read={messageRead}>
+                        {messageRead ? (
+                            <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M374.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 178.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l80 80c12.5 12.5 32.8 12.5 45.3 0l160-160zm-45.3 192L192 415.9l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l80 80c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0z" />
+                            </svg>
+                        ) : (
+                            <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                            </svg>
+                        )}
+                    </StatusIndicator>
+                </MessageMeta>
+            </MessageBubble>
+        </MessageContainer>
+    );
 };
 
 export default ChatMessage;

@@ -1,0 +1,420 @@
+/* Scamurai Dojo Theme - Modern Japanese-inspired design system
+   Designed for elderly users with readability and simplicity in mind */
+
+:root {
+    /* Traditional Japanese-inspired color palette */
+    --shoji-white: #f7f3e9;
+    --indigo-blue: #264653;
+    /* Samurai uniform color */
+    --bamboo-green: #355e3b;
+    --tatami-tan: #e9dcbe;
+    --vermilion-red: #c1121f;
+    /* Traditional samurai armor */
+    --ink-black: #1a1a1a;
+    --cherry-blossom: #f2d4d7;
+    --rice-paper: #f8f4e3;
+
+    /* UI Elements */
+    --primary: var(--indigo-blue);
+    --secondary: var(--bamboo-green);
+    --accent: var(--vermilion-red);
+    --background: var(--shoji-white);
+    --surface: #ffffff;
+    --text-primary: var(--ink-black);
+    --text-secondary: #595959;
+    --text-light: #f7f7f7;
+
+    /* Typography */
+    --font-heading: 'Noto Sans JP', 'Roboto', sans-serif;
+    --font-body: 'Roboto', 'Helvetica Neue', sans-serif;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    /* Shadows */
+    --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.12);
+    --shadow-hard: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Base Styles */
+body {
+    background-color: var(--rice-paper);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    font-size: 16px;
+    background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.02) 75%, rgba(0, 0, 0, 0.02)),
+        linear-gradient(-45deg, rgba(0, 0, 0, 0.02) 25%, transparent 25%, transparent 75%, rgba(0, 0, 0, 0.02) 75%, rgba(0, 0, 0, 0.02));
+    background-size: 20px 20px;
+}
+
+/* Typography - larger font sizes for elderly users */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    color: var(--primary);
+    margin-top: 0;
+    letter-spacing: 0.02em;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-lg);
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: var(--spacing-md);
+}
+
+h3 {
+    font-size: 1.75rem;
+    margin-bottom: var(--spacing-sm);
+}
+
+p {
+    margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+    /* Larger text for readability */
+    line-height: 1.8;
+}
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+/* Card Styles - inspired by shoji screens */
+.card {
+    background-color: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    border-left: 4px solid var(--primary);
+    position: relative;
+}
+
+.card-header {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styles - inspired by traditional Japanese design */
+.btn {
+    display: inline-block;
+    background-color: var(--primary);
+    color: var(--text-light);
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    letter-spacing: 0.02em;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+}
+
+.btn-accent {
+    background-color: var(--accent);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-lg {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+}
+
+/* Form elements - high contrast and large for elderly users */
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-bottom: var(--spacing-md);
+    border: 2px solid #d1d1d1;
+    border-radius: var(--radius-md);
+    font-size: 1.1rem;
+    transition: border-color 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Japanese-inspired decorative elements */
+.divider {
+    height: 2px;
+    background-color: var(--tatami-tan);
+    margin: var(--spacing-xl) 0;
+    position: relative;
+}
+
+.divider::after {
+    content: "⦿";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--rice-paper);
+    padding: 0 var(--spacing-md);
+    color: var(--primary);
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.text-primary {
+    color: var(--primary);
+}
+
+.text-secondary {
+    color: var(--secondary);
+}
+
+.text-accent {
+    color: var(--accent);
+}
+
+.bg-primary {
+    background-color: var(--primary);
+}
+
+.bg-secondary {
+    background-color: var(--secondary);
+}
+
+.bg-accent {
+    background-color: var(--accent);
+}
+
+.mb-1 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.mb-2 {
+    margin-bottom: var(--spacing-md);
+}
+
+.mb-3 {
+    margin-bottom: var(--spacing-lg);
+}
+
+.mb-4 {
+    margin-bottom: var(--spacing-xl);
+}
+
+.mt-1 {
+    margin-top: var(--spacing-sm);
+}
+
+.mt-2 {
+    margin-top: var(--spacing-md);
+}
+
+.mt-3 {
+    margin-top: var(--spacing-lg);
+}
+
+.mt-4 {
+    margin-top: var(--spacing-xl);
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Accessibility improvements */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* High contrast focus states for accessibility */
+:focus {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Dojo-specific elements */
+.dojo-banner {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+        linear-gradient(to right, var(--primary), var(--secondary));
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    padding: var(--spacing-xxl) 0;
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+}
+
+.dojo-banner-content {
+    position: relative;
+    z-index: 2;
+}
+
+.tatami-section {
+    background-color: var(--tatami-tan);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-medium);
+}
+
+/* Progress indicators for training */
+.progress-bar {
+    height: 12px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--secondary);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+/* Speech bubble for samurai wisdom */
+.wisdom-bubble {
+    position: relative;
+    background-color: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-soft);
+}
+
+.wisdom-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -20px;
+    left: 30px;
+    border-width: 20px 20px 0;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+}
+
+/* Threat level indicator styling */
+.threat-meter {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.threat-level {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-right: var(--spacing-md);
+    min-width: 120px;
+}
+
+.threat-level-low {
+    color: var(--bamboo-green);
+}
+
+.threat-level-medium {
+    color: #f4a261;
+    /* Amber warning color */
+}
+
+.threat-level-high {
+    color: var(--accent);
+}
+
+.threat-bar {
+    flex: 1;
+    height: 12px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.threat-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.threat-fill-low {
+    background-color: var(--bamboo-green);
+}
+
+.threat-fill-medium {
+    background-color: #f4a261;
+}
+
+.threat-fill-high {
+    background-color: var(--accent);
+}
