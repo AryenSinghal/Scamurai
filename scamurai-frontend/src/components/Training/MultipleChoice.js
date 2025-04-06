@@ -15,27 +15,32 @@ const QuestionText = styled.h3`
   color: #333;
 `;
 
-const OptionsList = styled.div`
+const OptionsWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 15px;
+  gap: 20px;
+  margin-top: 20px;
+  justify-content: center;
 `;
 
 const OptionButton = styled.button`
-  background-color: white;
-  border: 2px solid #e0e0e0;
+  background-color: ${props => props.isScam ? '#ffebee' : '#e8f5e9'};
+  color: ${props => props.isScam ? '#c62828' : '#2e7d32'};
+  border: 2px solid ${props => props.isScam ? '#f44336' : '#4caf50'};
   border-radius: 8px;
-  padding: 15px;
-  text-align: left;
-  font-size: 1rem;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
+  flex: 1;
+  justify-content: center;
+  max-width: 200px;
   
   &:hover {
-    background-color: #f5f5f5;
-    border-color: #d0d0d0;
+    background-color: ${props => props.isScam ? '#f44336' : '#4caf50'};
+    color: white;
   }
   
   &:focus {
@@ -44,45 +49,39 @@ const OptionButton = styled.button`
   }
 `;
 
-const OptionNumber = styled.div`
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background-color: #ff5722;
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: bold;
-  margin-right: 15px;
-  flex-shrink: 0;
+const OptionIcon = styled.span`
+  font-size: 1.5rem;
+  margin-right: 10px;
 `;
 
-const OptionText = styled.div`
-  flex: 1;
-`;
-
-const MultipleChoice = ({ options, scenarioIndex }) => {
+const MultipleChoice = ({ scenario, scenarioIndex }) => {
   const { selectOption } = useContext(TrainingContext);
   
-  const handleOptionClick = (optionIndex) => {
-    selectOption(scenarioIndex, optionIndex);
+  const handleOptionClick = (isScam) => {
+    // In our new version, we're comparing a boolean value (user's choice) 
+    // against the isScam property in the scenario
+    selectOption(scenarioIndex, isScam);
   };
   
   return (
     <OptionsContainer>
-      <QuestionText>What do you think about this message?</QuestionText>
-      <OptionsList>
-        {options.map((option, index) => (
-          <OptionButton 
-            key={index}
-            onClick={() => handleOptionClick(index)}
-          >
-            <OptionNumber>{index + 1}</OptionNumber>
-            <OptionText>{option}</OptionText>
-          </OptionButton>
-        ))}
-      </OptionsList>
+      <QuestionText>Is this message a scam or safe?</QuestionText>
+      <OptionsWrapper>
+        <OptionButton 
+          isScam={true} 
+          onClick={() => handleOptionClick(true)}
+        >
+          <OptionIcon>⚠️</OptionIcon>
+          Scam
+        </OptionButton>
+        <OptionButton 
+          isScam={false} 
+          onClick={() => handleOptionClick(false)}
+        >
+          <OptionIcon>✓</OptionIcon>
+          Safe
+        </OptionButton>
+      </OptionsWrapper>
     </OptionsContainer>
   );
 };
