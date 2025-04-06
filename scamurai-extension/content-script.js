@@ -160,29 +160,37 @@ function showResultsOverlay(results) {
 
     // Populate the overlay with results
     resultsOverlay.innerHTML = `
-      <div class="scamurai-overlay-content">
-        <div class="scamurai-header">
-          <h2>Scamurai Analysis Results</h2>
-          <button id="scamurai-close-btn">&times;</button>
+    <div class="scamurai-overlay-content">
+      <div class="scamurai-header">
+        <h2>Scamurai Analysis Results</h2>
+        <button id="scamurai-close-btn">&times;</button>
+      </div>
+      <div class="scamurai-results-content">
+        <div class="scamurai-threat-indicator ${threatLevelClass}">
+          <span class="scamurai-threat-level">${threatLevelText}</span>
+          <span class="scamurai-threat-score">${results.threatLevel}/10</span>
         </div>
-        <div class="scamurai-results-content">
-          <div class="scamurai-threat-indicator ${threatLevelClass}">
-            <span class="scamurai-threat-level">${threatLevelText}</span>
-            <span class="scamurai-threat-score">${results.threatLevel}/10</span>
-          </div>
-          <div class="scamurai-explanation">
-            <h3>Analysis:</h3>
-            <p>${results.explanation}</p>
-          </div>
-          <div class="scamurai-tips">
-            <h3>Safety Tips:</h3>
+        <div class="scamurai-explanation">
+          <h3>Analysis:</h3>
+          <p>${results.explanation}</p>
+        </div>
+        ${results.reasons && results.threatLevel >= 5 ? `
+          <div class="scamurai-reasons">
+            <h3>Reasons for Concern:</h3>
             <ul>
-              ${results.tips ? results.tips.map(tip => `<li>${tip}</li>`).join('') : '<li>Be cautious with requests for personal information.</li><li>Don\'t click on suspicious links.</li>'}
+              ${results.reasons.map(reason => `<li>${reason}</li>`).join('')}
             </ul>
           </div>
-        </div>
+        ` : ''}
+        
+        ${results.threatLevel >= 8 ? `
+          <div class="scamurai-high-alert">
+            <p>If you were about to share personal information or send money, please stop and talk to a trusted friend or family member first.</p>
+          </div>
+        ` : ''}
       </div>
-    `;
+    </div>
+  `;
 
     // Show the overlay
     resultsOverlay.style.display = 'flex';
