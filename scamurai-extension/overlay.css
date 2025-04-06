@@ -1,18 +1,19 @@
-/* Scamurai Styles for Floating Button and Overlay */
+/* Scamurai Styles for Floating Button and Speech Bubble */
 
 /* Floating Action Button (FAB) */
 .scamurai-fab {
     position: fixed;
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background-color: #ff5722;
     color: white;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     cursor: pointer;
+    /* Regular cursor instead of move */
     z-index: 9999;
     transition: transform 0.3s, background-color 0.3s;
     display: flex;
@@ -22,228 +23,291 @@
     padding: 0;
     line-height: 1.2;
     text-align: center;
-  }
-  
-  .scamurai-fab:hover {
+    user-select: none;
+    /* Prevent text selection while dragging */
+}
+
+.scamurai-fab:hover {
     transform: scale(1.1);
     background-color: #f44336;
-  }
-  
-  .scamurai-fab:active {
+}
+
+.scamurai-fab:active {
     transform: scale(0.95);
-  }
-  
-  /* Button positions */
-  .scamurai-fab.bottom-right {
+}
+
+/* Button positions - used only for initial positioning */
+.scamurai-fab.bottom-right {
     bottom: 30px;
     right: 30px;
-  }
-  
-  .scamurai-fab.bottom-left {
+}
+
+.scamurai-fab.bottom-left {
     bottom: 30px;
     left: 30px;
-  }
-  
-  .scamurai-fab.top-right {
+}
+
+.scamurai-fab.top-right {
     top: 30px;
     right: 30px;
-  }
-  
-  .scamurai-fab.top-left {
+}
+
+.scamurai-fab.top-left {
     top: 30px;
     left: 30px;
-  }
-  
-  /* Overlay base styles */
-  .scamurai-overlay {
+}
+
+/* Loading indicator bubble */
+.scamurai-loading-bubble {
+    display: block;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 10000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif;
-  }
-  
-  .scamurai-overlay-content {
+    z-index: 9998;
+}
+
+.loading-bubble-content {
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    width: 80%;
-    max-width: 600px;
-    max-height: 80vh;
-    overflow-y: auto;
-    padding: 20px;
-    position: relative;
-  }
-  
-  /* Header styles */
-  .scamurai-header {
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-  }
-  
-  .scamurai-header h2 {
+    position: relative;
+}
+
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #ff5722;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+    margin-bottom: 10px;
+}
+
+.loading-indicator p {
     margin: 0;
-    color: #333;
-    font-size: 24px;
-  }
-  
-  #scamurai-close-btn, 
-  #scamurai-error-close-btn {
+    font-size: 14px;
+    color: #555;
+    font-family: Arial, sans-serif;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Speech bubble results */
+.scamurai-speech-bubble {
+    position: fixed;
+    z-index: 9998;
+    background: transparent;
+    width: auto;
+    max-width: 480px;
+    font-family: Arial, sans-serif;
+    display: none;
+}
+
+.bubble-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    z-index: 9997;
+    /* Position and border styles set by JavaScript */
+}
+
+.results-content {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    width: 100%;
+}
+
+/* Header styles */
+.result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ff5722;
+    padding: 12px 15px;
+    color: white;
+}
+
+.result-header h2 {
+    margin: 0;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#scamurai-close-btn,
+#scamurai-error-close-btn {
     background: none;
     border: none;
-    font-size: 28px;
+    color: white;
+    font-size: 20px;
     cursor: pointer;
-    color: #777;
-    padding: 0;
-    margin: 0;
     line-height: 1;
-  }
-  
-  /* Loading overlay specifics */
-  .scamurai-overlay.loading .scamurai-overlay-content {
-    text-align: center;
-    padding: 40px;
-  }
-  
-  .scamurai-spinner {
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #ff5722;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 2s linear infinite;
-    margin: 0 auto 20px;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-  
-  /* Results overlay specifics */
-  .scamurai-results-content {
-    padding: 10px 0;
-  }
-  
-  .scamurai-threat-indicator {
+    padding: 0;
+}
+
+/* Result body */
+.result-body {
     padding: 15px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Threat indicator */
+.threat-indicator {
+    padding: 12px;
     border-radius: 6px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  
-  .scamurai-threat-level {
-    font-size: 20px;
+}
+
+.threat-level {
+    font-size: 16px;
     font-weight: bold;
-  }
-  
-  .scamurai-threat-score {
-    font-size: 18px;
+}
+
+.threat-score {
+    font-size: 14px;
     font-weight: normal;
-  }
-  
-  /* Threat level colors */
-  .scamurai-threat-indicator.low-threat {
+}
+
+/* Threat level colors */
+.threat-indicator.low-threat {
     background-color: #e8f5e9;
     color: #2e7d32;
     border-left: 5px solid #2e7d32;
-  }
-  
-  .scamurai-threat-indicator.medium-threat {
+}
+
+.threat-indicator.medium-threat {
     background-color: #fff8e1;
     color: #f57c00;
     border-left: 5px solid #f57c00;
-  }
-  
-  .scamurai-threat-indicator.high-threat {
+}
+
+.threat-indicator.high-threat {
     background-color: #ffebee;
     color: #c62828;
     border-left: 5px solid #c62828;
-  }
-  
-  .scamurai-explanation, 
-  .scamurai-tips {
-    margin-bottom: 20px;
-  }
-  
-  .scamurai-explanation h3, 
-  .scamurai-tips h3 {
-    font-size: 18px;
+}
+
+/* Content sections */
+.explanation,
+.reasons {
+    margin-bottom: 15px;
+}
+
+.explanation h3,
+.reasons h3 {
+    font-size: 14px;
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     color: #333;
-  }
-  
-  .scamurai-explanation p {
-    font-size: 18px;
-    line-height: 1.6;
+    font-weight: bold;
+}
+
+.explanation p {
+    font-size: 14px;
+    line-height: 1.5;
     color: #555;
     margin: 0;
-  }
-  
-  .scamurai-reasons ul {
+}
+
+.reasons ul {
     margin: 0;
     padding-left: 20px;
-  }
-  
-  .scamurai-reasons li {
-    margin-bottom: 8px;
-    font-size: 18px;
-    line-height: 1.6;
+}
+
+.reasons li {
+    margin-bottom: 6px;
+    font-size: 14px;
+    line-height: 1.5;
     color: #555;
     padding-left: 5px;
-  }
-  
-  .scamurai-reasons h3 {
-    font-size: 18px;
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  /* Error overlay specifics */
-  .scamurai-overlay.error .scamurai-overlay-content {
+}
+
+/* High alert warning */
+.high-alert {
+    margin-top: 12px;
+    padding: 10px 12px;
     background-color: #ffebee;
     border-left: 5px solid #c62828;
-  }
-  
-  .scamurai-error-content p {
+    border-radius: 4px;
+}
+
+.high-alert p {
     color: #c62828;
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: bold;
+    margin: 0;
+}
+
+/* Error styles */
+.error-message {
+    color: #c62828;
+    font-size: 14px;
     text-align: center;
-  }
-  
-  /* Accessibility enhancements */
-  .scamurai-overlay button:focus,
-  .scamurai-fab:focus {
+    margin-bottom: 15px;
+}
+
+/* Action button */
+.action-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.action-btn:hover {
+    background-color: #f44336;
+}
+
+/* Accessibility */
+.action-btn:focus,
+#scamurai-close-btn:focus,
+#scamurai-error-close-btn:focus,
+.scamurai-fab:focus {
     outline: 3px solid #2196f3;
-  }
-  
-  /* High contrast mode */
-  @media (prefers-contrast: high) {
-    .scamurai-fab {
-      background-color: #000000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .scamurai-speech-bubble {
+        max-width: 480px;
     }
-    
-    .scamurai-header h2 {
-      color: #000000;
+
+    .result-header h2 {
+        font-size: 16px;
     }
-    
-    .scamurai-explanation p,
-    .scamurai-tips li {
-      color: #000000;
+
+    .explanation p,
+    .reasons li {
+        font-size: 13px;
     }
   }
   

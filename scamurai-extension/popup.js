@@ -10,12 +10,86 @@ const scamsDetectedElement = document.getElementById('scams-detected');
 const highRiskCountElement = document.getElementById('high-risk-count');
 const mediumRiskCountElement = document.getElementById('medium-risk-count');
 const lowRiskCountElement = document.getElementById('low-risk-count');
+const closeButton = document.querySelector('.close-btn');
+const bubbleArrow = document.querySelector('.bubble-arrow');
 
 // Load settings when popup opens
 document.addEventListener('DOMContentLoaded', () => {
     loadSettings();
     loadStatistics();
+
+    // Add event listener for messages from content script
+    window.addEventListener('message', handleContentScriptMessages);
+
+    // Add event listener for the close button
+    if (closeButton) {
+        closeButton.addEventListener('click', closePopup);
+    }
 });
+
+// Handle messages from content script
+function handleContentScriptMessages(event) {
+    // Only accept messages from the same origin
+    if (event.origin !== window.origin) return;
+
+    const message = event.data;
+
+    if (message && message.action === 'setArrowPosition') {
+        // Position the speech bubble arrow
+        setArrowPosition(message.position);
+    }
+}
+
+// Set the position of the speech bubble arrow
+function setArrowPosition(position) {
+    if (!bubbleArrow) return;
+
+    // Default styling
+    bubbleArrow.style.width = '0';
+    bubbleArrow.style.height = '0';
+    bubbleArrow.style.position = 'absolute';
+
+    // Apply position-specific styling
+    switch (position) {
+        case 'left':
+            bubbleArrow.style.left = '-10px';
+            bubbleArrow.style.top = '30px';
+            bubbleArrow.style.borderTop = '10px solid transparent';
+            bubbleArrow.style.borderBottom = '10px solid transparent';
+            bubbleArrow.style.borderRight = '10px solid white';
+            break;
+
+        case 'right':
+            bubbleArrow.style.right = '-10px';
+            bubbleArrow.style.top = '30px';
+            bubbleArrow.style.borderTop = '10px solid transparent';
+            bubbleArrow.style.borderBottom = '10px solid transparent';
+            bubbleArrow.style.borderLeft = '10px solid white';
+            break;
+
+        case 'top':
+            bubbleArrow.style.left = '150px';
+            bubbleArrow.style.top = '-10px';
+            bubbleArrow.style.borderLeft = '10px solid transparent';
+            bubbleArrow.style.borderRight = '10px solid transparent';
+            bubbleArrow.style.borderBottom = '10px solid white';
+            break;
+
+        case 'bottom':
+            bubbleArrow.style.left = '150px';
+            bubbleArrow.style.bottom = '-10px';
+            bubbleArrow.style.borderLeft = '10px solid transparent';
+            bubbleArrow.style.borderRight = '10px solid transparent';
+            bubbleArrow.style.borderTop = '10px solid white';
+            break;
+    }
+}
+
+// Close the popup
+function closePopup() {
+    // Send a message to the parent window (content script)
+    window.parent.postMessage({ action: 'closePopup' }, '*');
+}
 
 // Load settings from storage
 function loadSettings() {
@@ -97,39 +171,7 @@ notificationsToggle.addEventListener('change', saveSettings);
 autoScanToggle.addEventListener('change', saveSettings);
 
 // Event listener for Scan Now button
-scanNowButton.addEventListener('click', async () => {
-    // Get the active tab
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    const activeTab = tabs[0];
-
-    if (!activeTab) {
-        console.error('Scamurai: No active tab found');
-        return;
-    }
-
-    // Check if the current site is supported
-    const url = activeTab.url;
-    const isSupported = url.includes('mail.google.com') || url.includes('web.whatsapp.com');
-
-    if (!isSupported) {
-        // Show an alert or update the status message
-        statusMessage.textContent = 'This website is not supported by Scamurai.';
-        statusMessage.className = 'status disabled';
-        return;
-    }
-
-    // Send message to content script to trigger a scan
-    chrome.tabs.sendMessage(activeTab.id, { action: 'checkCurrentPage' }, (response) => {
-        if (chrome.runtime.lastError) {
-            console.error('Scamurai: Error sending message to content script', chrome.runtime.lastError);
-
-            // The content script might not be loaded, so close the popup
-            window.close();
-        } else {
-            console.log('Scamurai: Scan initiated', response);
-
-            // Close the popup
-            window.close();
-        }
-    });
+scanNowButton.addEventListener('click', () => {
+    // Send message to parent window (content script) to scan
+    window.parent.postMessage({ action: 'scanPage' }, '*');
 });
