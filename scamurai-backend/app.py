@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -17,7 +17,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
-app = Flask(__name__)
+# Update the Flask app initialization
+app = Flask(__name__, 
+            static_folder='static',
+            static_url_path='',  # This makes the static folder accessible at the root URL
+            template_folder='templates')
 CORS(app)  # Enable CORS for all routes
 
 # Initialize Gemini API with your API key
@@ -160,6 +164,131 @@ def scan_content():
     except Exception as e:
         logger.exception(f"Error processing scan request: {str(e)}")
         return jsonify({"error": "An internal error occurred"}), 500
+
+@app.route('/api/training-scenarios', methods=['POST'])
+def get_training_scenarios():
+    """
+    Endpoint to generate training scenarios for the Scamurai Dojo
+    
+    Expected POST body:
+    {
+        "contentType": "email" or "chat",
+        "originalContent": "The content that was scanned"
+    }
+    """
+    try:
+        # Get request data
+        data = request.get_json()
+        
+        if not data or 'contentType' not in data:
+            return jsonify({"error": "Missing required fields"}), 400
+        
+        content_type = data.get('contentType', '')
+        original_content = data.get('originalContent', '')
+        
+        # Log request
+        logger.info(f"Received training scenarios request for content type: {content_type}")
+        
+        # Prompt for generating training scenarios
+        TRAINING_PROMPT = """
+        You are Scamurai, an advanced scam detection assistant helping to train elderly users to identify online scams.
+
+        Generate 4 realistic examples of {content_type} scams similar to the original content below. Each example should 
+        test a different scam pattern but be somewhat similar to the original.
+
+        Original content:
+        ```
+        {original_content}
+        ```
+
+        For each example, include:
+        1. The scam content (message or email body)
+        2. Four multiple-choice options for classifying the content (only one should be correct)
+        3. The correct answer (indicated by number 1-4)
+        4. An explanation of why it's a scam (or not) and what signs to look for
+
+        Format your response as a JSON object with an array of 4 scenarios like this:
+        {{
+            "scenarios": [
+                {{
+                    "content": "Example scam text here...",
+                    "options": [
+                        "This is safe - nothing suspicious",
+                        "This is a scam - it requests urgent action",
+                        "This is a scam - it contains suspicious links",
+                        "This is suspicious - but needs more information"
+                    ],
+                    "correctOption": 2,
+                    "explanation": "This is a scam because it creates false urgency to make you act without thinking..."
+                }},
+                ... (3 more scenarios)
+            ]
+        }}
+
+        Only provide the JSON object, nothing else.
+        """
+        
+        prompt = TRAINING_PROMPT.format(content_type=content_type, original_content=original_content)
+        
+        # Call Gemini API
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.7,  # Higher temperature for more varied examples
+                "top_p": 0.95,
+                "top_k": 40,
+            }
+        )
+        
+        # Extract and clean the response text
+        response_text = response.text.strip()
+        
+        # Try to find JSON in the response
+        json_start = response_text.find('{')
+        json_end = response_text.rfind('}')
+        
+        if json_start >= 0 and json_end > json_start:
+            try:
+                # Extract just the JSON part
+                json_text = response_text[json_start:json_end+1]
+                result = json.loads(json_text)
+                
+                # Validate the response format
+                if not isinstance(result, dict) or 'scenarios' not in result:
+                    logger.error(f"Invalid response format from Gemini API: {response_text}")
+                    return jsonify({"error": "Failed to generate scenarios"}), 500
+                
+                # Return the scenarios
+                return jsonify(result), 200
+                
+            except json.JSONDecodeError:
+                logger.error(f"Failed to parse JSON from Gemini API response: {json_text}")
+                return jsonify({"error": "Failed to parse scenarios"}), 500
+        else:
+            # No JSON structure found in response
+            logger.error(f"No JSON structure found in Gemini API response: {response_text}")
+            return jsonify({"error": "Failed to generate scenarios"}), 500
+    
+    except Exception as e:
+        logger.exception(f"Error generating training scenarios: {str(e)}")
+        return jsonify({"error": "An internal error occurred"}), 500
+
+# Serve React frontend
+@app.route('/dojo')
+def dojo():
+    return render_template('index.html')
+
+# Root route
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Catch-all route to handle React routing
+@app.route('/<path:path>')
+def catch_all(path):
+    if os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return render_template('index.html')
 
 @app.route('/health', methods=['GET'])
 def health_check():

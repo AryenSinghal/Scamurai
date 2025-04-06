@@ -322,11 +322,17 @@ function showResultsOverlay(results, button) {
     const resultsOverlay = document.createElement('div');
     resultsOverlay.id = 'scamurai-results';
     resultsOverlay.classList.add('scamurai-speech-bubble');
-
+  
     // Format the threat level as a user-friendly indicator
     const threatLevelClass = getThreatLevelClass(results.threatLevel);
     const threatLevelText = getThreatLevelText(results.threatLevel);
-
+  
+    // Generate URL for the training platform
+    const encodedContent = encodeURIComponent(document.body.innerText.substring(0, 500));
+    const contentType = window.location.href.includes('mail.google.com') ? 'email' : 'chat';
+    const currentUrl = encodeURIComponent(window.location.href);
+    const trainingUrl = `http://localhost:5001/dojo?type=${contentType}&content=${encodedContent}&returnUrl=${currentUrl}`;
+  
     // Populate the overlay with results
     resultsOverlay.innerHTML = `
     <div class="bubble-arrow"></div>
@@ -354,10 +360,16 @@ function showResultsOverlay(results, button) {
         ` : ''}
         
         ${results.threatLevel >= 7 ? `
-          <div class="high-alert">
-            <p>If you were about to share personal information or send money, please stop and talk to a trusted friend or family member first.</p>
+            <div class="scamurai-high-alert">
+              <p>If you were about to share personal information or send money, please stop and talk to a trusted friend or family member first.</p>
+            </div>
+          ` : ''}
+          
+          <div class="scamurai-training-link">
+            <p>Want to learn more? <a href="${trainingUrl}" target="_blank">Go to our educational platform for training</a></p>
+            
           </div>
-        ` : ''}
+        </div>
       </div>
     </div>
   `;
@@ -501,7 +513,7 @@ function addToScanHistory(result) {
         // Save updated history
         chrome.storage.local.set({ scamHistory: history });
     });
-}
+  }
 
 // Helper function to get a CSS class based on the threat level
 function getThreatLevelClass(level) {
