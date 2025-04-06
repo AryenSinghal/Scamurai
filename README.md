@@ -6,17 +6,15 @@ Scamurai is a browser extension designed to help elderly users detect scams on p
 
 The project consists of two main components:
 
-1. **Browser Extension** - Chrome/Firefox extension that injects a floating button on supported websites, allowing users to scan content for potential scams.
-2. **Backend Server** - Flask-based API that processes content using the Gemini API to determine scam probability.
+1. **Browser Extension** - Chrome/Firefox extension that injects a floating samurai button on supported websites, allowing users to scan content for potential scams.
+2. **Training Dojo** - A user-interactive React & Flask webapp which provides custom-generated examples of scam emails/texts to teach the user how to recognize scams.
 
 ## Features
 
 - **Floating Action Button (FAB)** - Large, accessible button that appears on supported websites
 - **Simple One-Click Scanning** - Users can check suspicious content with a single click
 - **AI-Powered Analysis** - Uses Google's Gemini AI to analyze content for scam indicators
-- **User-Friendly Results** - Presents findings with clear threat levels and simple explanations
-- **Educational Tips** - Provides relevant safety recommendations based on the specific content
-- **Senior-Friendly Interface** - Large text, high contrast, and simple controls
+- **User-Friendly Results** - Presents findings with clear threat levels and simple explanations in a cool samurai voice
 
 ## Installation Instructions
 
