@@ -140,66 +140,77 @@ async function sendToBackend(content) {
 }
 
 // Display the analysis results in an overlay
+// Replace the showResultsOverlay function with the content from content-script-update artifact
 function showResultsOverlay(results) {
     // Hide the loading indicator first
     hideLoadingIndicator();
-
+  
     // Create an overlay element if it doesn't exist
     let resultsOverlay = document.getElementById('scamurai-results');
-
+  
     if (!resultsOverlay) {
-        resultsOverlay = document.createElement('div');
-        resultsOverlay.id = 'scamurai-results';
-        resultsOverlay.classList.add('scamurai-overlay', 'results');
-        document.body.appendChild(resultsOverlay);
+      resultsOverlay = document.createElement('div');
+      resultsOverlay.id = 'scamurai-results';
+      resultsOverlay.classList.add('scamurai-overlay', 'results');
+      document.body.appendChild(resultsOverlay);
     }
-
+  
     // Format the threat level as a user-friendly indicator
     const threatLevelClass = getThreatLevelClass(results.threatLevel);
     const threatLevelText = getThreatLevelText(results.threatLevel);
-
+  
+    // Generate URL for the training platform
+    const encodedContent = encodeURIComponent(document.body.innerText.substring(0, 500));
+    const contentType = window.location.href.includes('mail.google.com') ? 'email' : 'chat';
+    const currentUrl = encodeURIComponent(window.location.href);
+    const trainingUrl = `http://localhost:5001/dojo?type=${contentType}&content=${encodedContent}&returnUrl=${currentUrl}`;
+  
     // Populate the overlay with results
     resultsOverlay.innerHTML = `
-    <div class="scamurai-overlay-content">
-      <div class="scamurai-header">
-        <h2>Scamurai Analysis Results</h2>
-        <button id="scamurai-close-btn">&times;</button>
-      </div>
-      <div class="scamurai-results-content">
-        <div class="scamurai-threat-indicator ${threatLevelClass}">
-          <span class="scamurai-threat-level">${threatLevelText}</span>
-          <span class="scamurai-threat-score">${results.threatLevel}/10</span>
+      <div class="scamurai-overlay-content">
+        <div class="scamurai-header">
+          <h2>Scamurai Analysis Results</h2>
+          <button id="scamurai-close-btn">&times;</button>
         </div>
-        <div class="scamurai-explanation">
-          <h3>Analysis:</h3>
-          <p>${results.explanation}</p>
+        <div class="scamurai-results-content">
+          <div class="scamurai-threat-indicator ${threatLevelClass}">
+            <span class="scamurai-threat-level">${threatLevelText}</span>
+            <span class="scamurai-threat-score">${results.threatLevel}/10</span>
+          </div>
+          <div class="scamurai-explanation">
+            <h3>Analysis:</h3>
+            <p>${results.explanation}</p>
+          </div>
+          ${results.reasons && results.threatLevel >= 5 ? `
+            <div class="scamurai-reasons">
+              <h3>Reasons for Concern:</h3>
+              <ul>
+                ${results.reasons.map(reason => `<li>${reason}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+          
+          ${results.threatLevel >= 7 ? `
+            <div class="scamurai-high-alert">
+              <p>If you were about to share personal information or send money, please stop and talk to a trusted friend or family member first.</p>
+            </div>
+          ` : ''}
+          
+          <div class="scamurai-training-link">
+            <p>Want to learn more? <a href="${trainingUrl}" target="_blank">Go to our educational platform for training</a></p>
+          </div>
         </div>
-        ${results.reasons && results.threatLevel >= 5 ? `
-          <div class="scamurai-reasons">
-            <h3>Reasons for Concern:</h3>
-            <ul>
-              ${results.reasons.map(reason => `<li>${reason}</li>`).join('')}
-            </ul>
-          </div>
-        ` : ''}
-        
-        ${results.threatLevel >= 8 ? `
-          <div class="scamurai-high-alert">
-            <p>If you were about to share personal information or send money, please stop and talk to a trusted friend or family member first.</p>
-          </div>
-        ` : ''}
       </div>
-    </div>
-  `;
-
+    `;
+  
     // Show the overlay
     resultsOverlay.style.display = 'flex';
-
+  
     // Add event listener to the close button
     document.getElementById('scamurai-close-btn').addEventListener('click', () => {
-        resultsOverlay.style.display = 'none';
+      resultsOverlay.style.display = 'none';
     });
-}
+  }
 
 // Helper function to get a CSS class based on the threat level
 function getThreatLevelClass(level) {
