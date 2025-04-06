@@ -3,39 +3,31 @@
 /* Floating Action Button (FAB) */
 .scamurai-fab {
     position: fixed;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background-color: #ff5722;
-    color: white;
+    background-color: transparent; /* Make background transparent */
+    background-image: url('chrome-extension://__MSG_@@extension_id__/icons/samurai.png');
+    background-size: cover;
+    background-position: center;
     border: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    font-size: 14px;
-    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;
-    /* Regular cursor instead of move */
     z-index: 9999;
-    transition: transform 0.3s, background-color 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif;
-    padding: 0;
-    line-height: 1.2;
-    text-align: center;
+    transition: transform 0.3s;
     user-select: none;
-    /* Prevent text selection while dragging */
-}
-
-.scamurai-fab:hover {
+    padding: 0;
+  }
+  
+  .scamurai-fab:hover {
     transform: scale(1.1);
-    background-color: #f44336;
-}
-
-.scamurai-fab:active {
+  }
+  
+  .scamurai-fab:active {
     transform: scale(0.95);
-}
-
+  }
+  
+  
 /* Button positions - used only for initial positioning */
 .scamurai-fab.bottom-right {
     bottom: 30px;

@@ -60,20 +60,19 @@ function injectFloatingButton() {
     // Create the button element
     const button = document.createElement('button');
     button.id = 'scamurai-fab';
-    button.innerText = CONFIG.buttonText;
+    button.title = 'Scamurai'; // Add title for accessibility
     button.classList.add('scamurai-fab', CONFIG.buttonPosition);
-
-    // We now separate click and drag completely by using different events
-    // Mousedown for drag
+    
+    // No text content needed since we're using an image
+    
+    // Add click event listener
     button.addEventListener('mousedown', startDrag);
-
-    // Click event for actual clicks (will be canceled if drag occurs)
     button.addEventListener('click', handleClickIfNotDragging);
-
+    
     // Append to the document body
     document.body.appendChild(button);
-}
-
+  }
+    
 // Function to handle the initial mousedown for dragging
 function startDrag(e) {
     // Always reset hasMoved at the start of a potential drag operation
