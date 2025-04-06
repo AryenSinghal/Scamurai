@@ -30,7 +30,6 @@ genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-2.0-flash')
 
 # Predefined prompt template
-#TODO: Prevent hallucination by using a more structured prompt
 PROMPT_TEMPLATE = """
 You are Scamurai, an advanced scam detection assistant designed to help elderly users 
 identify potential scams in online communication.
