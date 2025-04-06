@@ -66,11 +66,11 @@ function injectFloatingButton() {
     button.id = 'scamurai-fab';
     button.title = 'Scamurai'; // Add title for accessibility
     button.className = 'scamurai-fab ' + CONFIG.buttonPosition;
-    
+
     // Add click event listener
     button.addEventListener('mousedown', startDrag);
     button.addEventListener('click', handleClickIfNotDragging);
-    
+
     // Append to the document body
     document.body.appendChild(button);
 }
@@ -163,14 +163,14 @@ function handleClickIfNotDragging(e) {
 // Animate the samurai
 function animateSamurai() {
     if (isAnimating) return;
-    
+
     isAnimating = true;
     const button = document.getElementById('scamurai-fab');
     if (!button) {
         isAnimating = false;
         return;
     }
-    
+
     // Use the SamuraiAnimator if available, otherwise fall back to CSS classes
     if (window.samuraiAnimator) {
         window.samuraiAnimator.animate(button)
@@ -183,17 +183,17 @@ function animateSamurai() {
     } else {
         // Fall back to CSS animation classes
         const animationClass = ANIMATIONS[Math.floor(Math.random() * ANIMATIONS.length)];
-        
+
         // Add the animation class
         button.classList.add(animationClass);
-        
+
         // Listen for animation end
         const handleAnimationEnd = () => {
             button.classList.remove(animationClass);
             button.removeEventListener('animationend', handleAnimationEnd);
             isAnimating = false;
         };
-        
+
         button.addEventListener('animationend', handleAnimationEnd);
     }
 }
@@ -364,29 +364,36 @@ function showResultsOverlay(results, button) {
     const resultsOverlay = document.createElement('div');
     resultsOverlay.id = 'scamurai-results';
     resultsOverlay.classList.add('scamurai-speech-bubble');
-  
+
     // Format the threat level as a user-friendly indicator
     const threatLevelClass = getThreatLevelClass(results.threatLevel);
     const threatLevelText = getThreatLevelText(results.threatLevel);
-  
+
+    // Calculate the fill percentage for the meter
+    const meterFillPercentage = (results.threatLevel / 10) * 100;
+
     // Generate URL for the training platform
     const encodedContent = encodeURIComponent(document.body.innerText.substring(0, 500));
     const contentType = window.location.href.includes('mail.google.com') ? 'email' : 'chat';
     const currentUrl = encodeURIComponent(window.location.href);
     const trainingUrl = `http://localhost:5001/dojo?type=${contentType}&content=${encodedContent}&returnUrl=${currentUrl}`;
-  
+
     // Populate the overlay with results
     resultsOverlay.innerHTML = `
     <div class="bubble-arrow"></div>
     <div class="results-content">
-      <div class="result-header">
-        <h2>Scan Results</h2>
-        <button id="scamurai-close-btn">&times;</button>
-      </div>
       <div class="result-body">
-        <div class="threat-indicator ${threatLevelClass}">
-          <span class="threat-level">${threatLevelText}</span>
-          <span class="threat-score">${results.threatLevel}/10</span>
+        <div class="threat-header-container">
+          <div class="threat-indicator ${threatLevelClass}">
+            <div class="threat-header">
+              <span class="threat-level">${threatLevelText}</span>
+              <span class="threat-score">${results.threatLevel}/10</span>
+            </div>
+            <div class="threat-meter-container">
+              <div class="threat-meter-fill" style="width: ${meterFillPercentage}%"></div>
+            </div>
+          </div>
+          <button id="scamurai-close-btn" title="Close">&times;</button>
         </div>
         <div class="explanation">
           <h3>Analysis:</h3>
@@ -408,7 +415,7 @@ function showResultsOverlay(results, button) {
           ` : ''}
           
           <div class="scamurai-training-link">
-            <p>Want to learn more? <a href="${trainingUrl}" target="_blank">Go to our educational platform for training</a></p>
+            <p>Want to learn more? <a href="${trainingUrl}" target="_blank">Visit the Scamurai Dojo!</a></p>
           </div>
         </div>
       </div>
@@ -571,59 +578,59 @@ function getThreatLevelText(level) {
 }
 
 // Show an error message in a speech bubble
-function showError(message, button) {
-    // Hide the loading indicator first
-    hideLoadingIndicator();
+// function showError(message, button) {
+//     // Hide the loading indicator first
+//     hideLoadingIndicator();
 
-    if (!button) {
-        button = document.getElementById('scamurai-fab');
-    }
+//     if (!button) {
+//         button = document.getElementById('scamurai-fab');
+//     }
 
-    if (!button) {
-        console.error('Scamurai: Button not found for positioning error');
-        return;
-    }
+//     if (!button) {
+//         console.error('Scamurai: Button not found for positioning error');
+//         return;
+//     }
 
-    // Create error container
-    const errorOverlay = document.createElement('div');
-    errorOverlay.id = 'scamurai-error';
-    errorOverlay.classList.add('scamurai-speech-bubble');
+//     // Create error container
+//     const errorOverlay = document.createElement('div');
+//     errorOverlay.id = 'scamurai-error';
+//     errorOverlay.classList.add('scamurai-speech-bubble');
 
-    // Populate the error overlay
-    errorOverlay.innerHTML = `
-      <div class="bubble-arrow"></div>
-      <div class="results-content">
-        <div class="result-header">
-          <h2>Error</h2>
-          <button id="scamurai-error-close-btn">&times;</button>
-        </div>
-        <div class="result-body">
-          <p class="error-message">${message}</p>
-          <button class="action-btn" id="try-again-btn">Try Again</button>
-        </div>
-      </div>
-    `;
+//     // Populate the error overlay
+//     errorOverlay.innerHTML = `
+//       <div class="bubble-arrow"></div>
+//       <div class="results-content">
+//         <div class="result-header">
+//           <h2>Error</h2>
+//           <button id="scamurai-error-close-btn">&times;</button>
+//         </div>
+//         <div class="result-body">
+//           <p class="error-message">${message}</p>
+//           <button class="action-btn" id="try-again-btn">Try Again</button>
+//         </div>
+//       </div>
+//     `;
 
-    // Add to document
-    document.body.appendChild(errorOverlay);
+//     // Add to document
+//     document.body.appendChild(errorOverlay);
 
-    // Position the error bubble
-    positionBubble(errorOverlay, button);
+//     // Position the error bubble
+//     positionBubble(errorOverlay, button);
 
-    // Make the error visible
-    errorOverlay.style.display = 'block';
+//     // Make the error visible
+//     errorOverlay.style.display = 'block';
 
-    // Add event listener to the close button
-    document.getElementById('scamurai-error-close-btn').addEventListener('click', () => {
-        errorOverlay.remove();
-    });
+//     // Add event listener to the close button
+//     document.getElementById('scamurai-error-close-btn').addEventListener('click', () => {
+//         errorOverlay.remove();
+//     });
 
-    // Add event listener to the try again button
-    document.getElementById('try-again-btn').addEventListener('click', () => {
-        errorOverlay.remove();
-        handleButtonClick();
-    });
-}
+// Add event listener to the try again button
+// document.getElementById('try-again-btn').addEventListener('click', () => {
+//     errorOverlay.remove();
+//     handleButtonClick();
+// });
+// }
 
 // Handle messages from the background script
 function handleMessages(message, sender, sendResponse) {
