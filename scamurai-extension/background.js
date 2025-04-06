@@ -11,7 +11,8 @@ chrome.runtime.onInstalled.addListener((details) => {
             enabledSites: ['gmail', 'whatsapp'],
             notificationsEnabled: true,
             autoScanEnabled: false,
-            backendUrl: 'http://localhost:5001/api/scan' // Replace with your actual backend URL
+            backendUrl: 'http://localhost:5001/api/scan', // Replace with your actual backend URL
+            animationEnabled: true // Enable animations by default
         }, () => {
             console.log('Scamurai: Default settings initialized');
         });
@@ -22,23 +23,21 @@ chrome.runtime.onInstalled.addListener((details) => {
 chrome.action.onClicked.addListener((tab) => {
     // Only process supported sites
     if (isSupportedSite(tab.url)) {
-        // Send a message to the content script to check the current page
-        chrome.tabs.sendMessage(tab.id, { action: 'checkCurrentPage' }, (response) => {
-            if (chrome.runtime.lastError) {
-                console.error('Scamurai: Error sending message to content script', chrome.runtime.lastError);
-
-                // If there was an error, the content script might not be loaded, so inject it
-                chrome.scripting.executeScript({
-                    target: { tabId: tab.id },
-                    files: ['content-script.js']
-                }).then(() => {
-                    // Try sending the message again after a short delay
+        // Get animation setting
+        chrome.storage.sync.get(['animationEnabled'], (result) => {
+            const animationEnabled = result.animationEnabled !== false; // Default to true
+            
+            // First, try to animate the samurai if animations are enabled
+            if (animationEnabled) {
+                chrome.tabs.sendMessage(tab.id, { action: 'animateSamurai' }, (response) => {
+                    // After animation (or if it fails), send the scan message
                     setTimeout(() => {
-                        chrome.tabs.sendMessage(tab.id, { action: 'checkCurrentPage' });
+                        triggerScan(tab);
                     }, 500);
-                }).catch(err => {
-                    console.error('Scamurai: Failed to inject content script', err);
                 });
+            } else {
+                // If animations are disabled, just scan
+                triggerScan(tab);
             }
         });
     } else {
@@ -51,6 +50,29 @@ chrome.action.onClicked.addListener((tab) => {
         });
     }
 });
+
+// Trigger a scan on the page
+function triggerScan(tab) {
+    // Send a message to the content script to check the current page
+    chrome.tabs.sendMessage(tab.id, { action: 'checkCurrentPage' }, (response) => {
+        if (chrome.runtime.lastError) {
+            console.error('Scamurai: Error sending message to content script', chrome.runtime.lastError);
+
+            // If there was an error, the content script might not be loaded, so inject it
+            chrome.scripting.executeScript({
+                target: { tabId: tab.id },
+                files: ['samurai-animation.js', 'content-script.js']
+            }).then(() => {
+                // Try sending the message again after a short delay
+                setTimeout(() => {
+                    chrome.tabs.sendMessage(tab.id, { action: 'checkCurrentPage' });
+                }, 500);
+            }).catch(err => {
+                console.error('Scamurai: Failed to inject content script', err);
+            });
+        }
+    });
+}
 
 // Check if a URL is for a supported site
 function isSupportedSite(url) {
@@ -69,7 +91,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             'enabledSites',
             'notificationsEnabled',
             'autoScanEnabled',
-            'backendUrl'
+            'backendUrl',
+            'animationEnabled'
         ], (settings) => {
             sendResponse(settings);
         });
@@ -102,6 +125,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             chrome.storage.local.set({ scamHistory: history }, () => {
                 sendResponse({ status: 'recorded' });
             });
+        });
+        return true; // Keep the message channel open for asynchronous response
+    }
+
+    if (message.action === 'animateOnAllTabs') {
+        // Animate the samurai icon on all open tabs with the content script
+        chrome.tabs.query({}, (tabs) => {
+            tabs.forEach(tab => {
+                if (isSupportedSite(tab.url)) {
+                    chrome.tabs.sendMessage(tab.id, { action: 'animateSamurai' });
+                }
+            });
+            sendResponse({ status: 'animating' });
         });
         return true; // Keep the message channel open for asynchronous response
     }

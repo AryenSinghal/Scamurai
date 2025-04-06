@@ -4,7 +4,7 @@
 // Configuration
 const CONFIG = {
     backendUrl: 'http://localhost:5001/api/scan', // Replace with your actual backend URL
-    buttonText: 'Scamurai',
+    buttonText: '', // No text needed since we're using an image
     buttonPosition: 'top-right', // Default position: 'bottom-right', 'bottom-left', 'top-right', 'top-left'
 };
 
@@ -15,6 +15,10 @@ let dragOffsetY = 0;
 let buttonPosition = { x: 0, y: 0 };
 let isProcessing = false; // Flag to prevent multiple clicks while processing
 let hasMoved = false; // Track if movement has occurred during mousedown
+let isAnimating = false; // Track if the icon is currently animating
+
+// Animation types
+const ANIMATIONS = ['animate-swing', 'animate-bounce', 'animate-spin'];
 
 // Main initialization function
 function initScamurai() {
@@ -61,9 +65,7 @@ function injectFloatingButton() {
     const button = document.createElement('button');
     button.id = 'scamurai-fab';
     button.title = 'Scamurai'; // Add title for accessibility
-    button.classList.add('scamurai-fab', CONFIG.buttonPosition);
-    
-    // No text content needed since we're using an image
+    button.className = 'scamurai-fab ' + CONFIG.buttonPosition;
     
     // Add click event listener
     button.addEventListener('mousedown', startDrag);
@@ -71,8 +73,8 @@ function injectFloatingButton() {
     
     // Append to the document body
     document.body.appendChild(button);
-  }
-    
+}
+
 // Function to handle the initial mousedown for dragging
 function startDrag(e) {
     // Always reset hasMoved at the start of a potential drag operation
@@ -89,7 +91,7 @@ function startDrag(e) {
     dragOffsetX = e.clientX - buttonRect.left;
     dragOffsetY = e.clientY - buttonRect.top;
 
-    // Clear the default positioning classes
+    // Clear the default positioning classes but keep 'scamurai-fab'
     e.target.className = 'scamurai-fab';
 
     // Add document-level event listeners for dragging
@@ -158,12 +160,53 @@ function handleClickIfNotDragging(e) {
     handleButtonClick();
 }
 
+// Animate the samurai
+function animateSamurai() {
+    if (isAnimating) return;
+    
+    isAnimating = true;
+    const button = document.getElementById('scamurai-fab');
+    if (!button) {
+        isAnimating = false;
+        return;
+    }
+    
+    // Use the SamuraiAnimator if available, otherwise fall back to CSS classes
+    if (window.samuraiAnimator) {
+        window.samuraiAnimator.animate(button)
+            .then(() => {
+                isAnimating = false;
+            })
+            .catch(() => {
+                isAnimating = false;
+            });
+    } else {
+        // Fall back to CSS animation classes
+        const animationClass = ANIMATIONS[Math.floor(Math.random() * ANIMATIONS.length)];
+        
+        // Add the animation class
+        button.classList.add(animationClass);
+        
+        // Listen for animation end
+        const handleAnimationEnd = () => {
+            button.classList.remove(animationClass);
+            button.removeEventListener('animationend', handleAnimationEnd);
+            isAnimating = false;
+        };
+        
+        button.addEventListener('animationend', handleAnimationEnd);
+    }
+}
+
 // Handle the button click event to directly scan
 function handleButtonClick() {
     // If already processing, ignore the click
     if (isProcessing) return;
 
     isProcessing = true;
+
+    // Animate the samurai
+    animateSamurai();
 
     console.log('Scamurai: Button clicked, starting scan');
 
@@ -366,7 +409,6 @@ function showResultsOverlay(results, button) {
           
           <div class="scamurai-training-link">
             <p>Want to learn more? <a href="${trainingUrl}" target="_blank">Go to our educational platform for training</a></p>
-            
           </div>
         </div>
       </div>
@@ -512,7 +554,7 @@ function addToScanHistory(result) {
         // Save updated history
         chrome.storage.local.set({ scamHistory: history });
     });
-  }
+}
 
 // Helper function to get a CSS class based on the threat level
 function getThreatLevelClass(level) {
@@ -590,6 +632,9 @@ function handleMessages(message, sender, sendResponse) {
     if (message.action === 'checkCurrentPage') {
         handleButtonClick();
         sendResponse({ status: 'checking' });
+    } else if (message.action === 'animateSamurai') {
+        animateSamurai();
+        sendResponse({ status: 'animated' });
     }
 
     return true; // Keep the message channel open for asynchronous responses
