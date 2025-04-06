@@ -53,3 +53,20 @@ coverage.xml
 # Temporary files
 tmp/
 temp/
+
+# React app specific
+node_modules/
+scamurai-frontend/build/
+scamurai-frontend/.env
+scamurai-frontend/.env.local
+scamurai-frontend/.env.development.local
+scamurai-frontend/.env.test.local
+scamurai-frontend/.env.production.local
+scamurai-frontend/coverage/
+scamurai-frontend/npm-debug.log*
+scamurai-frontend/yarn-debug.log*
+scamurai-frontend/yarn-error.log*
+
+# Flask app build artifacts
+scamurai-backend/static/
+scamurai-backend/templates/
