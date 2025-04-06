@@ -11,7 +11,7 @@ chrome.runtime.onInstalled.addListener((details) => {
             enabledSites: ['gmail', 'whatsapp'],
             notificationsEnabled: true,
             autoScanEnabled: false,
-            backendUrl: 'https://your-backend-url.com/api/scan' // Replace with your actual backend URL
+            backendUrl: 'http://localhost:5001/api/scan' // Replace with your actual backend URL
         }, () => {
             console.log('Scamurai: Default settings initialized');
         });
