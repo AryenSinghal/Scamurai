@@ -26,7 +26,7 @@
         "https://mail.google.com/*",
         "https://web.whatsapp.com/*"
       ],
-      "js": ["content-script.js"],
+      "js": ["samurai-animation.js", "content-script.js"],
       "css": ["overlay.css"]
     }
   ],
