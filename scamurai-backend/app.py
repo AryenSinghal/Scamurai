@@ -30,10 +30,18 @@ genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel('gemini-2.0-flash')
 
 # Predefined prompt template
+#TODO: Prevent hallucination by using a more structured prompt
 PROMPT_TEMPLATE = """
 You are Scamurai, an advanced scam detection assistant designed to help elderly users 
-identify potential scams in online communication. Analyze the following content 
-carefully and determine if it appears to be a scam.
+identify potential scams in online communication.
+
+Speak as a wise Japanese monk would speak to a trusted friend — calm, brief, and clear. Do not use more words than necessary. 
+Let your wisdom be heard in stillness.
+
+Analyze the following content carefully and determine if it appears to be a scam.
+
+Ignore interface elements such as: "Click here to get older messages", "Return call",
+or any other UI text that is part of standard messaging platforms like WhatsApp or email apps.
 
 Content to analyze:
 ```
@@ -44,13 +52,18 @@ URL/Source: {url}
 
 Provide an analysis with the following:
 1. A threat level score from 1-10 (where 1 is safe and 10 is definitely a scam)
-2. A clear explanation of your analysis in simple language suitable for elderly users
-3. Three specific safety tips based on this particular content
+2. A non-technical explanation based on the threat level:
+   - If threat level < 5: Provide a 2-3 line explanation about why this content appears safe
+   - If threat level >= 5: 
+     a) Provide a 1-2 line preface explanation
+     b) For threat levels 5-7: Include 2 bullet points stating exact but 0.5 line reasons why you think it's a scam
+     c) For threat levels 8-10: Include 2 bullet points stating exact but 0.5 line reasons why you think it's a scam
+     d) Use simple language and avoid technical jargon.
 
 Format your response as a JSON object with these fields:
 - threatLevel: (number between 1-10)
-- explanation: (string with your analysis)
-- tips: (array of strings with safety tips)
+- explanation: (string with your preface analysis)
+- reasons: (array of strings with bullet points explaining why it's a scam, ONLY if threatLevel >= 5)
 
 Only respond with the JSON object, nothing else.
 """
@@ -87,7 +100,7 @@ def scan_content():
             prompt,
             generation_config={
                 "temperature": 0.1,  # Lower temperature for more deterministic output
-                "top_p": 0.95,
+                "top_p": 0.92,
                 "top_k": 40,
             }
         )
@@ -111,10 +124,9 @@ def scan_content():
                     return jsonify({
                         "threatLevel": 5,
                         "explanation": "Sorry, I couldn't properly analyze this content. Please try again or ask for help.",
-                        "tips": [
-                            "When in doubt, don't provide personal information.",
-                            "Ask a trusted friend or family member for a second opinion.",
-                            "Contact the supposed sender through official channels to verify."
+                        "reasons": [
+                            "The content contains elements that are difficult to verify",
+                            "Some patterns in the message resemble known scam techniques"
                         ]
                     }), 200
                 
@@ -129,10 +141,9 @@ def scan_content():
                 return jsonify({
                     "threatLevel": 5,
                     "explanation": "Sorry, I couldn't properly analyze this content. Please try again or ask for help.",
-                    "tips": [
-                        "When in doubt, don't provide personal information.",
-                        "Ask a trusted friend or family member for a second opinion.",
-                        "Contact the supposed sender through official channels to verify."
+                    "reasons": [
+                        "The content contains elements that are difficult to verify",
+                        "Some patterns in the message resemble known scam techniques"
                     ]
                 }), 200
         else:
@@ -141,10 +152,9 @@ def scan_content():
             return jsonify({
                 "threatLevel": 5,
                 "explanation": "Sorry, I couldn't properly analyze this content. Please try again or ask for help.",
-                "tips": [
-                    "When in doubt, don't provide personal information.",
-                    "Ask a trusted friend or family member for a second opinion.",
-                    "Contact the supposed sender through official channels to verify."
+                "reasons": [
+                    "The content contains elements that are difficult to verify",
+                    "Some patterns in the message resemble known scam techniques"
                 ]
             }), 200
     
