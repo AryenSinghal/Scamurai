@@ -183,7 +183,7 @@ function showResultsOverlay(results) {
           </div>
         ` : ''}
         
-        ${results.threatLevel >= 8 ? `
+        ${results.threatLevel >= 7 ? `
           <div class="scamurai-high-alert">
             <p>If you were about to share personal information or send money, please stop and talk to a trusted friend or family member first.</p>
           </div>
