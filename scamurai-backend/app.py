@@ -17,7 +17,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='static', template_folder='templates')
+# Update the Flask app initialization
+app = Flask(__name__, 
+            static_folder='static',
+            static_url_path='',  # This makes the static folder accessible at the root URL
+            template_folder='templates')
 CORS(app)  # Enable CORS for all routes
 
 # Initialize Gemini API with your API key
@@ -272,6 +276,11 @@ def get_training_scenarios():
 # Serve React frontend
 @app.route('/dojo')
 def dojo():
+    return render_template('index.html')
+
+# Root route
+@app.route('/')
+def index():
     return render_template('index.html')
 
 # Catch-all route to handle React routing
